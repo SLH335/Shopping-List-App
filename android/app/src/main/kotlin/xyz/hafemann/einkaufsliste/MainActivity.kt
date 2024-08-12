@@ -1,0 +1,5 @@
+package xyz.hafemann.einkaufsliste
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity()
