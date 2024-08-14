@@ -1,3 +1,4 @@
+import 'package:einkaufsliste/features/auth/data/auth.dart';
 import 'package:einkaufsliste/features/list/data/entries.dart';
 import 'package:einkaufsliste/features/list/domain/entry.dart';
 import 'package:einkaufsliste/widgets/text_fields.dart';
@@ -14,8 +15,9 @@ class ListScreen extends ConsumerStatefulWidget {
 class _ListScreenState extends ConsumerState<ListScreen> {
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Map<String, List<Entry>>> entries =
-        ref.watch(entriesProvider);
+    final AsyncValue<AuthData> authData = ref.watch(authProvider);
+    final token = authData.valueOrNull?.token ?? '';
+    final AsyncValue<Map<String, List<Entry>>> entries = ref.watch(entriesProvider(token));
 
     return Scaffold(
       appBar: AppBar(
@@ -27,8 +29,7 @@ class _ListScreenState extends ConsumerState<ListScreen> {
             itemCount: value.length,
             itemBuilder: (BuildContext context, int i) {
               final formKey = GlobalKey<FormState>();
-              final TextEditingController addController =
-                  TextEditingController();
+              final TextEditingController addController = TextEditingController();
 
               return Form(
                 key: formKey,
@@ -54,20 +55,18 @@ class _ListScreenState extends ConsumerState<ListScreen> {
                             leading: Checkbox(
                               value: value.values.toList()[i][j].completed,
                               onChanged: (checked) {
-                                ref
-                                    .read(entriesProvider.notifier)
-                                    .completeEntry(
-                                        value.values.toList()[i][j].id,
-                                        checked ?? false);
+                                ref.read(entriesProvider(token).notifier).completeEntry(
+                                    token,
+                                    value.values.toList()[i][j].id,
+                                    checked ?? false);
                               },
                             ),
                             title: Text(
                               value.values.toList()[i][j].text,
                               style: TextStyle(
-                                  decoration:
-                                      value.values.toList()[i][j].completed
-                                          ? TextDecoration.lineThrough
-                                          : TextDecoration.none),
+                                  decoration: value.values.toList()[i][j].completed
+                                      ? TextDecoration.lineThrough
+                                      : TextDecoration.none),
                             ),
                           );
                         },
@@ -77,7 +76,8 @@ class _ListScreenState extends ConsumerState<ListScreen> {
                           controller: addController,
                           onSubmitted: () {
                             if (formKey.currentState?.validate() ?? false) {
-                              ref.read(entriesProvider.notifier).addEntry(
+                              ref.read(entriesProvider(token).notifier).addEntry(
+                                  token,
                                   addController.text.trim(),
                                   value.keys.toList()[i]);
                             }

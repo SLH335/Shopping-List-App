@@ -9,18 +9,25 @@ part 'entries.g.dart';
 @riverpod
 class Entries extends _$Entries {
   @override
-  Future<Map<String, List<Entry>>> build() async {
-    final response = await http.get(Uri.http('10.0.2.2:9001', '/entries'));
+  Future<Map<String, List<Entry>>> build(String token) async {
+    final response = await http.get(
+      Uri.http('10.0.2.2:9001', '/entries'),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer $token',
+      },
+    );
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     var entries = Entry.allFromJson(json['data']);
     return entries;
   }
 
-  Future<void> completeEntry(int id, bool completed) async {
+  Future<void> completeEntry(String token, int id, bool completed) async {
     final response = await http.post(
       Uri.http('10.0.2.2:9001', '/entry/complete'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer $token',
       },
       encoding: Encoding.getByName('utf-8'),
       body: {
@@ -38,11 +45,12 @@ class Entries extends _$Entries {
     state = AsyncData(entries);
   }
 
-  Future<void> addEntry(String text, category) async {
+  Future<void> addEntry(String token, text, category) async {
     final response = await http.post(
       Uri.http('10.0.2.2:9001', '/entry'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer $token',
       },
       encoding: Encoding.getByName('utf-8'),
       body: {
