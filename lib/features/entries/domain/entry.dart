@@ -7,9 +7,11 @@ part 'entry.g.dart';
 class Entry with _$Entry {
   factory Entry({
     required int id,
+    required int listId,
     required String text,
     required String category,
     required bool completed,
+    required DateTime createdAt,
   }) = _Entry;
 
   factory Entry.fromJson(Map<String, dynamic> json) => _$EntryFromJson(json);

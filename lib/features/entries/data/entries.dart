@@ -24,24 +24,29 @@ class Entries extends _$Entries {
 
   Future<void> completeEntry(String token, int id, bool completed) async {
     final response = await http.post(
-      Uri.http('10.0.2.2:9001', '/entry/complete'),
+      Uri.http('10.0.2.2:9001', '/entry/$id/complete'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer $token',
       },
       encoding: Encoding.getByName('utf-8'),
       body: {
-        'id': id.toString(),
         'completed': completed.toString(),
       },
     );
 
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final json = jsonDecode(response.body);
     if (response.statusCode != 200) {
       print(json['message']);
       return;
     }
-    var entries = Entry.allFromJson(json['data']);
+
+    var entry = Entry.fromJson(json['data']);
+    final entries = await future;
+    entries[entry.category]?.removeWhere((element) => element.id == entry.id);
+    entries[entry.category]?.add(entry);
+    entries[entry.category]?.sort((a, b) => a.createdAt.isBefore(b.createdAt) ? 0 : 1);
+
     state = AsyncData(entries);
   }
 
@@ -60,13 +65,18 @@ class Entries extends _$Entries {
       },
     );
 
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final json = jsonDecode(response.body);
 
     if (response.statusCode != 200) {
       print(json['message']);
       return;
     }
-    var entries = Entry.allFromJson(json['data']);
+
+    var entry = Entry.fromJson(json['data']);
+    final entries = await future;
+    entries[entry.category]?.removeWhere((element) => element.id == entry.id);
+    entries[entry.category]?.add(entry);
+
     state = AsyncData(entries);
   }
 }
