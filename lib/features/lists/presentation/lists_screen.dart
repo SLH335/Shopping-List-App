@@ -25,35 +25,41 @@ class _ListsScreenState extends ConsumerState<ListsScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: switch (lists) {
-        AsyncData(:final value) => ListView.builder(
-            itemCount: value.length,
-            itemBuilder: (BuildContext context, int i) {
-              return GestureDetector(
-                onTap: () {
-                  context.goNamed('entries',
-                      pathParameters: {'listId': value[i].id.toString()},
-                      queryParameters: {'listName': value[i].name});
-                },
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          value[i].name,
-                          style: const TextStyle(fontSize: 16),
+        AsyncData(:final value) => Padding(
+            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+            child: ListView.builder(
+                itemCount: value.length,
+                itemBuilder: (BuildContext context, int i) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: GestureDetector(
+                      onTap: () {
+                        context.goNamed('entries',
+                            pathParameters: {'listId': value[i].id.toString()},
+                            queryParameters: {'listName': value[i].name});
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                value[i].name,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              Text(
+                                'Erstellt von ${value[i].creator.username}',
+                                style: const TextStyle(color: Colors.grey, fontSize: 16),
+                              ),
+                            ],
+                          ),
                         ),
-                        Text(
-                          'Erstellt von ${value[i].creator.username}',
-                          style: const TextStyle(color: Colors.grey, fontSize: 16),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }),
+                  );
+                }),
+          ),
         AsyncError(:final error) => Center(child: Text('Error: $error')),
         _ => const CircularProgressIndicator(),
       },
