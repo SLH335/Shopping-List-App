@@ -66,10 +66,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: StandardField(
+              child: UsernameField(
                 controller: usernameController,
-                label: 'Benutzername',
-                icon: const Icon(Icons.person),
               ),
             ),
             Padding(
