@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:einkaufsliste/features/list/domain/entry.dart';
+import 'package:einkaufsliste/features/entries/domain/entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'entries.g.dart';
@@ -9,9 +9,9 @@ part 'entries.g.dart';
 @riverpod
 class Entries extends _$Entries {
   @override
-  Future<Map<String, List<Entry>>> build(String token) async {
+  Future<Map<String, List<Entry>>> build(String token, String listId) async {
     final response = await http.get(
-      Uri.http('10.0.2.2:9001', '/entries'),
+      Uri.http('10.0.2.2:9001', '/list/$listId'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer $token',
@@ -45,7 +45,7 @@ class Entries extends _$Entries {
     state = AsyncData(entries);
   }
 
-  Future<void> addEntry(String token, text, category) async {
+  Future<void> addEntry(String token, String listId, String text, String category) async {
     final response = await http.post(
       Uri.http('10.0.2.2:9001', '/entry'),
       headers: {
@@ -54,6 +54,7 @@ class Entries extends _$Entries {
       },
       encoding: Encoding.getByName('utf-8'),
       body: {
+        'list_id': listId,
         'text': text,
         'category': category,
       },

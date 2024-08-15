@@ -32,7 +32,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     ref.listen(authProvider, (previous, next) {
       if (next.valueOrNull?.state == AuthState.success) {
-        context.go('/list');
+        context.go('/lists');
       }
     });
 

@@ -34,7 +34,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     ref.listen(authProvider, (previous, next) {
       if (next.valueOrNull?.state == AuthState.success) {
-        context.go('/list');
+        context.go('/lists');
       }
     });
 

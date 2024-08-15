@@ -1,27 +1,31 @@
 import 'package:einkaufsliste/features/auth/data/auth.dart';
-import 'package:einkaufsliste/features/list/data/entries.dart';
-import 'package:einkaufsliste/features/list/domain/entry.dart';
+import 'package:einkaufsliste/features/entries/data/entries.dart';
+import 'package:einkaufsliste/features/entries/domain/entry.dart';
 import 'package:einkaufsliste/widgets/text_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ListScreen extends ConsumerStatefulWidget {
-  const ListScreen({super.key});
+class EntriesScreen extends ConsumerStatefulWidget {
+  const EntriesScreen({super.key, required this.listId, required this.listName});
+
+  final String listId;
+  final String listName;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ListScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _EntriesScreenState();
 }
 
-class _ListScreenState extends ConsumerState<ListScreen> {
+class _EntriesScreenState extends ConsumerState<EntriesScreen> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue<AuthData> authData = ref.watch(authProvider);
     final token = authData.valueOrNull?.token ?? '';
-    final AsyncValue<Map<String, List<Entry>>> entries = ref.watch(entriesProvider(token));
+    final AsyncValue<Map<String, List<Entry>>> entries =
+        ref.watch(entriesProvider(token, widget.listId));
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Einkaufsliste'),
+        title: Text(widget.listName),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: switch (entries) {
@@ -55,10 +59,10 @@ class _ListScreenState extends ConsumerState<ListScreen> {
                             leading: Checkbox(
                               value: value.values.toList()[i][j].completed,
                               onChanged: (checked) {
-                                ref.read(entriesProvider(token).notifier).completeEntry(
-                                    token,
-                                    value.values.toList()[i][j].id,
-                                    checked ?? false);
+                                ref
+                                    .read(entriesProvider(token, widget.listId).notifier)
+                                    .completeEntry(
+                                        token, value.values.toList()[i][j].id, checked ?? false);
                               },
                             ),
                             title: Text(
@@ -76,8 +80,9 @@ class _ListScreenState extends ConsumerState<ListScreen> {
                           controller: addController,
                           onSubmitted: () {
                             if (formKey.currentState?.validate() ?? false) {
-                              ref.read(entriesProvider(token).notifier).addEntry(
+                              ref.read(entriesProvider(token, widget.listId).notifier).addEntry(
                                   token,
+                                  widget.listId,
                                   addController.text.trim(),
                                   value.keys.toList()[i]);
                             }
