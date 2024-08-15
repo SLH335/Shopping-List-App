@@ -27,46 +27,82 @@ class Auth extends _$Auth {
   }
 
   Future<void> register(String server, username, password) async {
-    final response = await http.post(
-      Uri.http(server.replaceFirst('http://', '').replaceFirst('9001/', '9001'), 'auth/register'),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      encoding: Encoding.getByName('utf-8'),
-      body: {
-        'username': username,
-        'password': password,
-      },
-    );
+    http.Response response;
+    try {
+      response = await http.post(
+        Uri.http(server.replaceFirst('http://', '').replaceFirst('9001/', '9001'), 'auth/register'),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        encoding: Encoding.getByName('utf-8'),
+        body: {
+          'username': username,
+          'password': password,
+        },
+      );
+    } catch (ex) {
+      state = AsyncData(
+          AuthData(state: AuthState.error, message: 'Fehler: Server ist nicht erreichbar'));
+      return;
+    }
 
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    Map<String, dynamic> json;
+    try {
+      json = jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (ex) {
+      state = AsyncData(
+          AuthData(state: AuthState.error, message: 'Fehler: Ungültige Antwort'));
+      return;
+    }
     if (response.statusCode != 200 || !json['success']) {
       state = AsyncData(AuthData(state: AuthState.error, message: json['message']));
       return;
     }
 
+    if (json['data'] == null) {
+      state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Die Sitzung konnte nicht aufgebaut werden'));
+      return;
+    }
     state = AsyncData(AuthData(state: AuthState.success, token: json['data']));
   }
 
   Future<void> login(String server, username, password) async {
-    final response = await http.post(
-      Uri.http(server.replaceFirst('http://', '').replaceFirst('9001/', '9001'), 'auth/login'),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      encoding: Encoding.getByName('utf-8'),
-      body: {
-        'username': username,
-        'password': password,
-      },
-    );
+    http.Response response;
+    try {
+      response = await http.post(
+        Uri.http(server.replaceFirst('http://', '').replaceFirst('9001/', '9001'), 'auth/login'),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        encoding: Encoding.getByName('utf-8'),
+        body: {
+          'username': username,
+          'password': password,
+        },
+      );
+    } catch (ex) {
+      state = AsyncData(
+          AuthData(state: AuthState.error, message: 'Fehler: Server ist nicht erreichbar'));
+      return;
+    }
 
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    Map<String, dynamic> json;
+    try {
+      json = jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (ex) {
+      state = AsyncData(
+          AuthData(state: AuthState.error, message: 'Fehler: Ungültige Antwort'));
+      return;
+    }
     if (response.statusCode != 200 || !json['success']) {
       state = AsyncData(AuthData(state: AuthState.error, message: json['message']));
       return;
     }
 
+    if (json['data'] == null) {
+      state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Die Sitzung konnte nicht aufgebaut werden'));
+      return;
+    }
     state = AsyncData(AuthData(state: AuthState.success, token: json['data']));
   }
 }
