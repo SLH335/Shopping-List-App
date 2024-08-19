@@ -1,6 +1,7 @@
 import 'package:einkaufsliste/features/auth/data/auth.dart';
 import 'package:einkaufsliste/features/lists/data/lists.dart';
 import 'package:einkaufsliste/features/lists/domain/list.dart';
+import 'package:einkaufsliste/widgets/text_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +25,10 @@ class _ListsScreenState extends ConsumerState<ListsScreen> {
         title: const Text('Einkaufslisten'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _dialogBuilder(context, ref, token),
+        child: const Icon(Icons.add),
+      ),
       body: switch (lists) {
         AsyncData(:final value) => Padding(
             padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
@@ -34,9 +39,11 @@ class _ListsScreenState extends ConsumerState<ListsScreen> {
                     padding: const EdgeInsets.only(bottom: 4),
                     child: GestureDetector(
                       onTap: () {
-                        context.goNamed('entries',
-                            pathParameters: {'listId': value[i].id.toString()},
-                            queryParameters: {'listName': value[i].name});
+                        context.goNamed(
+                          'entries',
+                          pathParameters: {'listId': value[i].id.toString()},
+                          queryParameters: {'listName': value[i].name},
+                        );
                       },
                       child: Card(
                         child: Padding(
@@ -65,4 +72,45 @@ class _ListsScreenState extends ConsumerState<ListsScreen> {
       },
     );
   }
+}
+
+Future<void> _dialogBuilder(BuildContext context, WidgetRef ref, String token) {
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController listNameController = TextEditingController();
+
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Form(
+        key: formKey,
+        child: AlertDialog(
+          title: const Text('Einkaufsliste hinzufügen'),
+          content: StandardField(
+            controller: listNameController,
+            label: 'Name',
+            icon: const Icon(Icons.numbers_rounded),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Abbrechen'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Hinzufügen'),
+              onPressed: () {
+                if (!(formKey.currentState?.validate() ?? false)) {
+                  return;
+                }
+                String name = listNameController.text.trim();
+                ref.read(listsProvider(token).notifier).addList(token, name);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
