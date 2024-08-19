@@ -17,8 +17,8 @@ class Entries extends _$Entries {
         'Authorization': 'Bearer $token',
       },
     );
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
-    var entries = Entry.allFromJson(json['data']);
+    final json = jsonDecode(response.body);
+    var entries = Entry.allFromJson(json['data'] ?? []);
     return entries;
   }
 
