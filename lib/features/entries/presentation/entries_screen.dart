@@ -28,6 +28,10 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
         title: Text(widget.listName),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _dialogBuilder(context, ref, token, widget.listId),
+        child: const Icon(Icons.add),
+      ),
       body: switch (entries) {
         AsyncData(:final value) => Padding(
             padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
@@ -106,4 +110,45 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
       },
     );
   }
+}
+
+Future<void> _dialogBuilder(BuildContext context, WidgetRef ref, String token, String listId) {
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController categoryNameController = TextEditingController();
+
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Form(
+        key: formKey,
+        child: AlertDialog(
+          title: const Text('Kategorie hinzufügen'),
+          content: StandardField(
+            controller: categoryNameController,
+            label: 'Name',
+            icon: const Icon(Icons.numbers_rounded),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Abbrechen'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Hinzufügen'),
+              onPressed: () {
+                if (!(formKey.currentState?.validate() ?? false)) {
+                  return;
+                }
+                String name = categoryNameController.text.trim();
+                ref.read(entriesProvider(token, listId).notifier).addCategory(name);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

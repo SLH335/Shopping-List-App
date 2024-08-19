@@ -73,10 +73,17 @@ class Entries extends _$Entries {
     }
 
     var entry = Entry.fromJson(json['data']);
-    final entries = await future;
-    entries[entry.category]?.removeWhere((element) => element.id == entry.id);
-    entries[entry.category]?.add(entry);
+    final categories = await future;
+    categories[entry.category]?.removeWhere((element) => element.id == entry.id);
+    categories[entry.category]?.add(entry);
 
-    state = AsyncData(entries);
+    state = AsyncData(categories);
+  }
+
+  Future<void> addCategory(String name) async {
+    final categories = await future;
+    categories[name] = [];
+
+    state = AsyncData(categories);
   }
 }
