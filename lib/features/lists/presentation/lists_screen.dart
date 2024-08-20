@@ -1,4 +1,3 @@
-import 'package:einkaufsliste/features/auth/data/auth.dart';
 import 'package:einkaufsliste/features/lists/data/lists.dart';
 import 'package:einkaufsliste/features/lists/domain/list.dart';
 import 'package:einkaufsliste/widgets/text_fields.dart';
@@ -16,8 +15,6 @@ class ListsScreen extends ConsumerStatefulWidget {
 class _ListsScreenState extends ConsumerState<ListsScreen> {
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<AuthData> authData = ref.watch(authProvider);
-    final token = authData.valueOrNull?.token ?? '';
     AsyncValue<List<ShoppingList>> lists = ref.watch(listsProvider);
 
     return Scaffold(
@@ -26,7 +23,7 @@ class _ListsScreenState extends ConsumerState<ListsScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _dialogBuilder(context, ref, token),
+        onPressed: () => _dialogBuilder(context, ref),
         child: const Icon(Icons.add),
       ),
       body: switch (lists) {
@@ -77,7 +74,7 @@ class _ListsScreenState extends ConsumerState<ListsScreen> {
   }
 }
 
-Future<void> _dialogBuilder(BuildContext context, WidgetRef ref, String token) {
+Future<void> _dialogBuilder(BuildContext context, WidgetRef ref) {
   final formKey = GlobalKey<FormState>();
   final TextEditingController listNameController = TextEditingController();
 

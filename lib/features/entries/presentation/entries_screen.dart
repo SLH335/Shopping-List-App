@@ -1,4 +1,3 @@
-import 'package:einkaufsliste/features/auth/data/auth.dart';
 import 'package:einkaufsliste/features/entries/data/entries.dart';
 import 'package:einkaufsliste/features/entries/domain/entry.dart';
 import 'package:einkaufsliste/widgets/text_fields.dart';
@@ -18,8 +17,6 @@ class EntriesScreen extends ConsumerStatefulWidget {
 class _EntriesScreenState extends ConsumerState<EntriesScreen> {
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<AuthData> authData = ref.watch(authProvider);
-    final token = authData.valueOrNull?.token ?? '';
     final AsyncValue<Map<String, List<Entry>>> entries = ref.watch(entriesProvider(widget.listId));
 
     return Scaffold(
@@ -28,7 +25,7 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _dialogBuilder(context, ref, token, widget.listId),
+        onPressed: () => _dialogBuilder(context, ref, widget.listId),
         child: const Icon(Icons.add),
       ),
       body: switch (entries) {
@@ -112,7 +109,7 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
   }
 }
 
-Future<void> _dialogBuilder(BuildContext context, WidgetRef ref, String token, String listId) {
+Future<void> _dialogBuilder(BuildContext context, WidgetRef ref, String listId) {
   final formKey = GlobalKey<FormState>();
   final TextEditingController categoryNameController = TextEditingController();
 
