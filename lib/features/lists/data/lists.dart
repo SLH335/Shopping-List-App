@@ -11,7 +11,7 @@ part 'lists.g.dart';
 class Lists extends _$Lists {
   @override
   Future<List<ShoppingList>> build() async {
-    final AuthData authData = ref.read(authProvider).value!;
+    final AuthData authData = await ref.watch(authProvider.future);
     http.Response response;
     try {
       response = await http.get(
@@ -34,7 +34,7 @@ class Lists extends _$Lists {
   }
 
   Future<void> addList(String name) async {
-    final AuthData authData = ref.read(authProvider).value!;
+    final AuthData authData = await ref.read(authProvider.future);
     http.Response response;
     try {
       response = await http.post(

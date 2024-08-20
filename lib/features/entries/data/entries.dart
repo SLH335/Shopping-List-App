@@ -11,7 +11,7 @@ part 'entries.g.dart';
 class Entries extends _$Entries {
   @override
   Future<Map<String, List<Entry>>> build(String listId) async {
-    final AuthData authData = ref.read(authProvider).value!;
+    final AuthData authData = await ref.watch(authProvider.future);
     final response = await http.get(
       Uri.http(authData.server, '/list/$listId'),
       headers: {
@@ -25,7 +25,7 @@ class Entries extends _$Entries {
   }
 
   Future<void> completeEntry(int id, bool completed) async {
-    final AuthData authData = ref.read(authProvider).value!;
+    final AuthData authData = await ref.read(authProvider.future);
     final response = await http.post(
       Uri.http(authData.server, '/entry/$id/complete'),
       headers: {
@@ -54,7 +54,7 @@ class Entries extends _$Entries {
   }
 
   Future<void> addEntry(String listId, String text, String category) async {
-    final AuthData authData = ref.read(authProvider).value!;
+    final AuthData authData = await ref.read(authProvider.future);
     final response = await http.post(
       Uri.http(authData.server, '/entry'),
       headers: {

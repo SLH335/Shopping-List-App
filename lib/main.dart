@@ -1,6 +1,7 @@
 import 'package:einkaufsliste/features/auth/presentation/login_screen.dart';
 import 'package:einkaufsliste/features/auth/presentation/register_screen.dart';
 import 'package:einkaufsliste/features/entries/presentation/entries_screen.dart';
+import 'package:einkaufsliste/features/invitations/presentation/invitations_screen.dart';
 import 'package:einkaufsliste/features/lists/presentation/lists_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,6 +44,11 @@ class _MyAppState extends State<MyApp> {
               listId: state.pathParameters['listId'] ?? '',
               listName: state.uri.queryParameters['listName'] ?? '',
             ),
+          ),
+          GoRoute(
+            name: 'invitations',
+            path: 'invitations',
+            builder: (context, state) => const InvitationsScreen(),
           ),
         ],
       ),

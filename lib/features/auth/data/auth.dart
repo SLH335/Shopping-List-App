@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:einkaufsliste/features/auth/domain/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -12,10 +13,11 @@ enum AuthState {
 }
 
 class AuthData {
-  AuthData({required this.state, this.message = '', this.token = '', this.server = ''});
+  AuthData({required this.state, this.user, this.message = '', this.token = '', this.server = ''});
 
   AuthState state;
   String message;
+  User? user;
   String token;
   String server;
 }
@@ -52,8 +54,7 @@ class Auth extends _$Auth {
     try {
       json = jsonDecode(response.body) as Map<String, dynamic>;
     } catch (ex) {
-      state = AsyncData(
-          AuthData(state: AuthState.error, message: 'Fehler: Ungültige Antwort'));
+      state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Ungültige Antwort'));
       return;
     }
     if (response.statusCode != 200 || !json['success']) {
@@ -61,11 +62,21 @@ class Auth extends _$Auth {
       return;
     }
 
-    if (json['data'] == null) {
-      state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Die Sitzung konnte nicht aufgebaut werden'));
+    if (json['data'] == null || json['data']['token'] == null || json['data']['user'] == null) {
+      state = AsyncData(AuthData(
+        state: AuthState.error,
+        message: 'Fehler: Die Sitzung konnte nicht aufgebaut werden',
+      ));
       return;
     }
-    state = AsyncData(AuthData(state: AuthState.success, token: json['data'], server: server));
+
+    final user = User.fromJson(json['data']['user']);
+    state = AsyncData(AuthData(
+      state: AuthState.success,
+      user: user,
+      token: json['data']['token'],
+      server: server,
+    ));
   }
 
   Future<void> login(String server, String username, String password) async {
@@ -84,8 +95,10 @@ class Auth extends _$Auth {
         },
       );
     } catch (ex) {
-      state = AsyncData(
-          AuthData(state: AuthState.error, message: 'Fehler: Server ist nicht erreichbar'));
+      state = AsyncData(AuthData(
+        state: AuthState.error,
+        message: 'Fehler: Server ist nicht erreichbar',
+      ));
       return;
     }
 
@@ -93,8 +106,7 @@ class Auth extends _$Auth {
     try {
       json = jsonDecode(response.body) as Map<String, dynamic>;
     } catch (ex) {
-      state = AsyncData(
-          AuthData(state: AuthState.error, message: 'Fehler: Ungültige Antwort'));
+      state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Ungültige Antwort'));
       return;
     }
     if (response.statusCode != 200 || !json['success']) {
@@ -102,10 +114,20 @@ class Auth extends _$Auth {
       return;
     }
 
-    if (json['data'] == null) {
-      state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Die Sitzung konnte nicht aufgebaut werden'));
+    if (json['data'] == null || json['data']['token'] == null || json['data']['user'] == null) {
+      state = AsyncData(AuthData(
+        state: AuthState.error,
+        message: 'Fehler: Die Sitzung konnte nicht aufgebaut werden',
+      ));
       return;
     }
-    state = AsyncData(AuthData(state: AuthState.success, token: json['data'], server: server));
+
+    final user = User.fromJson(json['data']['user']);
+    state = AsyncData(AuthData(
+      state: AuthState.success,
+      user: user,
+      token: json['data']['token'],
+      server: server,
+    ));
   }
 }

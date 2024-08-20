@@ -1,0 +1,131 @@
+import 'dart:convert';
+
+import 'package:einkaufsliste/features/auth/data/auth.dart';
+import 'package:einkaufsliste/features/invitations/domain/invitation.dart';
+import 'package:einkaufsliste/features/lists/data/lists.dart';
+import 'package:http/http.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'invitations.g.dart';
+
+@riverpod
+class Invitations extends _$Invitations {
+  @override
+  Future<List<Invitation>> build() async {
+    final AuthData authData = await ref.watch(authProvider.future);
+    Response response;
+    try {
+      response = await get(
+        Uri.http(authData.server, '/invitations'),
+        headers: {
+          'Authorization': 'Bearer ${authData.token}',
+        }
+      );
+    } catch (e) {
+      return [];
+    }
+
+    final json = jsonDecode(response.body);
+    if (response.statusCode != 200) {
+      print(json['message']);
+    }
+    final invitations = <Invitation>[];
+    for (var invitationData in json['data']) {
+      final invitation = Invitation.fromJson(invitationData);
+      if (invitation.invitee.id == authData.user?.id) {
+        invitations.add(invitation);
+      }
+    }
+    return invitations;
+  }
+
+  Future<void> invite(String username, int listId) async {
+    final AuthData authData = await ref.read(authProvider.future);
+    Response response;
+    try {
+      response = await post(
+        Uri.http(authData.server, '/invitation'),
+        headers: {
+          'Authorization': 'Bearer ${authData.token}',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'username': username,
+          'list_id': listId.toString(),
+        },
+      );
+    } catch (e) {
+      print(e);
+      return;
+    }
+
+    final json = jsonDecode(response.body);
+
+    if (response.statusCode != 200) {
+      print(json['message']);
+      return;
+    }
+  }
+
+  Future<void> acceptInvitation(String invitationToken) async {
+    final AuthData authData = await ref.read(authProvider.future);
+    Response response;
+    try {
+      response = await post(
+        Uri.http(authData.server, '/invitation/accept'),
+        headers: {
+          'Authorization': 'Bearer ${authData.token}',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'invitation_token': invitationToken,
+       },
+      );
+    } catch (e) {
+      return;
+    }
+
+    final json = jsonDecode(response.body);
+
+    if (response.statusCode != 200) {
+      print(json['message']);
+      return;
+    }
+
+    final invitations = await future;
+    invitations.removeWhere((element) => element.token == invitationToken);
+    state = AsyncData(invitations);
+    ref.invalidate(listsProvider);
+  }
+
+  Future<void> declineInvitation(String invitationToken) async {
+    final AuthData authData = await ref.read(authProvider.future);
+    Response response;
+    try {
+      response = await post(
+        Uri.http(authData.server, '/invitation/decline'),
+        headers: {
+          'Authorization': 'Bearer ${authData.token}',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'invitation_token': invitationToken,
+        },
+      );
+    } catch (e) {
+      return;
+    }
+
+    final json = jsonDecode(response.body);
+
+    if (response.statusCode != 200) {
+      print(json['message']);
+      return;
+    }
+
+    final invitations = await future;
+    invitations.removeWhere((element) => element.token == invitationToken);
+    state = AsyncData(invitations);
+  }
+
+}

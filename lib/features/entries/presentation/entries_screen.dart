@@ -33,7 +33,6 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
             padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
             child: ListView.builder(
               itemCount: value.length + 1,
-              shrinkWrap: true,
               itemBuilder: (BuildContext context, int i) {
                 if (i == value.length) {
                   return const SizedBox(height: 72);
