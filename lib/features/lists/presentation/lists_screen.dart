@@ -18,7 +18,7 @@ class _ListsScreenState extends ConsumerState<ListsScreen> {
   Widget build(BuildContext context) {
     final AsyncValue<AuthData> authData = ref.watch(authProvider);
     final token = authData.valueOrNull?.token ?? '';
-    AsyncValue<List<ShoppingList>> lists = ref.watch(listsProvider(token));
+    AsyncValue<List<ShoppingList>> lists = ref.watch(listsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -104,7 +104,7 @@ Future<void> _dialogBuilder(BuildContext context, WidgetRef ref, String token) {
                   return;
                 }
                 String name = listNameController.text.trim();
-                ref.read(listsProvider(token).notifier).addList(token, name);
+                ref.read(listsProvider.notifier).addList(name);
                 Navigator.of(context).pop();
               },
             ),

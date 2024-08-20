@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:einkaufsliste/features/auth/data/auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:einkaufsliste/features/entries/domain/entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,12 +10,13 @@ part 'entries.g.dart';
 @riverpod
 class Entries extends _$Entries {
   @override
-  Future<Map<String, List<Entry>>> build(String token, String listId) async {
+  Future<Map<String, List<Entry>>> build(String listId) async {
+    final AuthData authData = ref.read(authProvider).value!;
     final response = await http.get(
-      Uri.http('10.0.2.2:9001', '/list/$listId'),
+      Uri.http(authData.server, '/list/$listId'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${authData.token}',
       },
     );
     final json = jsonDecode(response.body);
@@ -22,12 +24,13 @@ class Entries extends _$Entries {
     return entries;
   }
 
-  Future<void> completeEntry(String token, int id, bool completed) async {
+  Future<void> completeEntry(int id, bool completed) async {
+    final AuthData authData = ref.read(authProvider).value!;
     final response = await http.post(
-      Uri.http('10.0.2.2:9001', '/entry/$id/complete'),
+      Uri.http(authData.server, '/entry/$id/complete'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${authData.token}',
       },
       encoding: Encoding.getByName('utf-8'),
       body: {
@@ -50,12 +53,13 @@ class Entries extends _$Entries {
     state = AsyncData(entries);
   }
 
-  Future<void> addEntry(String token, String listId, String text, String category) async {
+  Future<void> addEntry(String listId, String text, String category) async {
+    final AuthData authData = ref.read(authProvider).value!;
     final response = await http.post(
-      Uri.http('10.0.2.2:9001', '/entry'),
+      Uri.http(authData.server, '/entry'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${authData.token}',
       },
       encoding: Encoding.getByName('utf-8'),
       body: {

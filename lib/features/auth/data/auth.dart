@@ -12,11 +12,12 @@ enum AuthState {
 }
 
 class AuthData {
-  AuthData({required this.state, this.message = '', this.token = ''});
+  AuthData({required this.state, this.message = '', this.token = '', this.server = ''});
 
   AuthState state;
   String message;
   String token;
+  String server;
 }
 
 @riverpod
@@ -26,11 +27,12 @@ class Auth extends _$Auth {
     return AuthData(state: AuthState.initial);
   }
 
-  Future<void> register(String server, username, password) async {
+  Future<void> register(String server, String username, String password) async {
     http.Response response;
+    server = server.replaceFirst('http://', '').replaceFirst('9001/', '9001');
     try {
       response = await http.post(
-        Uri.http(server.replaceFirst('http://', '').replaceFirst('9001/', '9001'), 'auth/register'),
+        Uri.http(server, 'auth/register'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -63,14 +65,15 @@ class Auth extends _$Auth {
       state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Die Sitzung konnte nicht aufgebaut werden'));
       return;
     }
-    state = AsyncData(AuthData(state: AuthState.success, token: json['data']));
+    state = AsyncData(AuthData(state: AuthState.success, token: json['data'], server: server));
   }
 
-  Future<void> login(String server, username, password) async {
+  Future<void> login(String server, String username, String password) async {
+    server = server.replaceFirst('http://', '').replaceFirst('9001/', '9001');
     http.Response response;
     try {
       response = await http.post(
-        Uri.http(server.replaceFirst('http://', '').replaceFirst('9001/', '9001'), 'auth/login'),
+        Uri.http(server, 'auth/login'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -103,6 +106,6 @@ class Auth extends _$Auth {
       state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Die Sitzung konnte nicht aufgebaut werden'));
       return;
     }
-    state = AsyncData(AuthData(state: AuthState.success, token: json['data']));
+    state = AsyncData(AuthData(state: AuthState.success, token: json['data'], server: server));
   }
 }

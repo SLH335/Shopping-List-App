@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:einkaufsliste/features/auth/data/auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:einkaufsliste/features/lists/domain/list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,13 +10,14 @@ part 'lists.g.dart';
 @riverpod
 class Lists extends _$Lists {
   @override
-  Future<List<ShoppingList>> build(String token) async {
+  Future<List<ShoppingList>> build() async {
+    final AuthData authData = ref.read(authProvider).value!;
     http.Response response;
     try {
       response = await http.get(
-        Uri.http('10.0.2.2:9001', '/lists'),
+        Uri.http(authData.server, '/lists'),
         headers: {
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ${authData.token}',
         },
       );
     } catch (e) {
@@ -31,14 +33,15 @@ class Lists extends _$Lists {
     return lists;
   }
 
-  Future<void> addList(String token, String name) async {
+  Future<void> addList(String name) async {
+    final AuthData authData = ref.read(authProvider).value!;
     http.Response response;
     try {
       response = await http.post(
-        Uri.http('10.0.2.2:9001', '/list'),
+        Uri.http(authData.server, '/list'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ${authData.token}',
         },
         body: {
           'name': name,

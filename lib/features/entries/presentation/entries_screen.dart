@@ -20,8 +20,7 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
   Widget build(BuildContext context) {
     final AsyncValue<AuthData> authData = ref.watch(authProvider);
     final token = authData.valueOrNull?.token ?? '';
-    final AsyncValue<Map<String, List<Entry>>> entries =
-        ref.watch(entriesProvider(token, widget.listId));
+    final AsyncValue<Map<String, List<Entry>>> entries = ref.watch(entriesProvider(widget.listId));
 
     return Scaffold(
       appBar: AppBar(
@@ -67,10 +66,8 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
                                 leading: Checkbox(
                                   value: value.values.toList()[i][j].completed,
                                   onChanged: (checked) {
-                                    ref
-                                        .read(entriesProvider(token, widget.listId).notifier)
-                                        .completeEntry(token, value.values.toList()[i][j].id,
-                                            checked ?? false);
+                                    ref.read(entriesProvider(widget.listId).notifier).completeEntry(
+                                        value.values.toList()[i][j].id, checked ?? false);
                                   },
                                 ),
                                 title: Text(
@@ -88,8 +85,7 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
                               controller: addController,
                               onSubmitted: () {
                                 if (formKey.currentState?.validate() ?? false) {
-                                  ref.read(entriesProvider(token, widget.listId).notifier).addEntry(
-                                      token,
+                                  ref.read(entriesProvider(widget.listId).notifier).addEntry(
                                       widget.listId,
                                       addController.text.trim(),
                                       value.keys.toList()[i]);
@@ -142,7 +138,7 @@ Future<void> _dialogBuilder(BuildContext context, WidgetRef ref, String token, S
                   return;
                 }
                 String name = categoryNameController.text.trim();
-                ref.read(entriesProvider(token, listId).notifier).addCategory(name);
+                ref.read(entriesProvider(listId).notifier).addCategory(name);
                 Navigator.of(context).pop();
               },
             ),
