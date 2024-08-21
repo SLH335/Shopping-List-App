@@ -15,12 +15,9 @@ class Invitations extends _$Invitations {
     final AuthData authData = await ref.watch(authProvider.future);
     Response response;
     try {
-      response = await get(
-        Uri.http(authData.server, '/invitations'),
-        headers: {
-          'Authorization': 'Bearer ${authData.token}',
-        }
-      );
+      response = await get(Uri.http(authData.server, '/invitations'), headers: {
+        'Authorization': 'Bearer ${authData.token}',
+      });
     } catch (e) {
       return [];
     }
@@ -32,9 +29,7 @@ class Invitations extends _$Invitations {
     final invitations = <Invitation>[];
     for (var invitationData in json['data']) {
       final invitation = Invitation.fromJson(invitationData);
-      if (invitation.invitee.id == authData.user?.id) {
-        invitations.add(invitation);
-      }
+      invitations.add(invitation);
     }
     return invitations;
   }
@@ -79,7 +74,7 @@ class Invitations extends _$Invitations {
         },
         body: {
           'invitation_token': invitationToken,
-       },
+        },
       );
     } catch (e) {
       return;
@@ -128,4 +123,34 @@ class Invitations extends _$Invitations {
     state = AsyncData(invitations);
   }
 
+  Future<void> revokeInvitation(String invitationToken) async {
+    final AuthData authData = await ref.read(authProvider.future);
+    Response response;
+    try {
+      response = await post(
+        Uri.http(authData.server, '/invitation/revoke'),
+        headers: {
+          'Authorization': 'Bearer ${authData.token}',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'invitation_token': invitationToken,
+        },
+      );
+    } catch (e) {
+      print(e);
+      return;
+    }
+
+    final json = jsonDecode(response.body);
+
+    if (response.statusCode != 200) {
+      print(json['message']);
+      return;
+    }
+
+    final invitations = await future;
+    invitations.removeWhere((element) => element.token == invitationToken);
+    state = AsyncData(invitations);
+  }
 }
