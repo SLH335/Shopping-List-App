@@ -28,82 +28,87 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
         onPressed: () => _dialogBuilder(context, ref, widget.listId),
         child: const Icon(Icons.add),
       ),
-      body: switch (entries) {
-        AsyncData(:final value) => Padding(
-            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: ListView.builder(
-              itemCount: value.length + 1,
-              itemBuilder: (BuildContext context, int i) {
-                if (i == value.length) {
-                  return const SizedBox(height: 72);
-                }
-                final formKey = GlobalKey<FormState>();
-                final TextEditingController addController = TextEditingController();
+      body: RefreshIndicator(
+        onRefresh: () => ref.refresh(entriesProvider(widget.listId).future),
+        child: switch (entries) {
+          AsyncData(:final value) => Padding(
+              padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+              child: ListView.builder(
+                itemCount: value.length + 1,
+                itemBuilder: (BuildContext context, int i) {
+                  if (i == value.length) {
+                    return const SizedBox(height: 72);
+                  }
+                  final formKey = GlobalKey<FormState>();
+                  final TextEditingController addController = TextEditingController();
 
-                return Form(
-                  key: formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Card(
-                      child: Column(
-                        children: [
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Text(
-                                value.keys.toList()[i],
-                                style: const TextStyle(fontSize: 18),
+                  return Form(
+                    key: formKey,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: Text(
+                                  value.keys.toList()[i],
+                                  style: const TextStyle(fontSize: 18),
+                                ),
                               ),
                             ),
-                          ),
-                          const Divider(indent: 8, endIndent: 8),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: value.values.toList()[i].length,
-                            itemBuilder: (BuildContext context, int j) {
-                              return ListTile(
-                                leading: Checkbox(
-                                  value: value.values.toList()[i][j].completed,
-                                  onChanged: (checked) {
-                                    ref.read(entriesProvider(widget.listId).notifier).completeEntry(
-                                        value.values.toList()[i][j].id, checked ?? false);
-                                  },
-                                ),
-                                title: Text(
-                                  value.values.toList()[i][j].text,
-                                  style: TextStyle(
-                                      decoration: value.values.toList()[i][j].completed
-                                          ? TextDecoration.lineThrough
-                                          : TextDecoration.none),
-                                ),
-                              );
-                            },
-                          ),
-                          ListTile(
-                            title: EntryAddField(
-                              controller: addController,
-                              onSubmitted: () {
-                                if (formKey.currentState?.validate() ?? false) {
-                                  ref.read(entriesProvider(widget.listId).notifier).addEntry(
-                                      widget.listId,
-                                      addController.text.trim(),
-                                      value.keys.toList()[i]);
-                                }
+                            const Divider(indent: 8, endIndent: 8),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: value.values.toList()[i].length,
+                              itemBuilder: (BuildContext context, int j) {
+                                return ListTile(
+                                  leading: Checkbox(
+                                    value: value.values.toList()[i][j].completed,
+                                    onChanged: (checked) {
+                                      ref
+                                          .read(entriesProvider(widget.listId).notifier)
+                                          .completeEntry(
+                                              value.values.toList()[i][j].id, checked ?? false);
+                                    },
+                                  ),
+                                  title: Text(
+                                    value.values.toList()[i][j].text,
+                                    style: TextStyle(
+                                        decoration: value.values.toList()[i][j].completed
+                                            ? TextDecoration.lineThrough
+                                            : TextDecoration.none),
+                                  ),
+                                );
                               },
                             ),
-                          ),
-                        ],
+                            ListTile(
+                              title: EntryAddField(
+                                controller: addController,
+                                onSubmitted: () {
+                                  if (formKey.currentState?.validate() ?? false) {
+                                    ref.read(entriesProvider(widget.listId).notifier).addEntry(
+                                        widget.listId,
+                                        addController.text.trim(),
+                                        value.keys.toList()[i]);
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        AsyncError(:final error) => Center(child: Text('Error: $error')),
-        _ => const CircularProgressIndicator(),
-      },
+          AsyncError(:final error) => Center(child: Text('Error: $error')),
+          _ => const CircularProgressIndicator(),
+        },
+      ),
     );
   }
 }

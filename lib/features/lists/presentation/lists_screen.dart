@@ -41,59 +41,65 @@ class _ListsScreenState extends ConsumerState<ListsScreen> {
         onPressed: () => _addListDialogBuilder(context, ref),
         child: const Icon(Icons.add),
       ),
-      body: switch (lists) {
-        AsyncData(:final value) => Padding(
-            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: ListView.builder(
-                itemCount: value.length + 1,
-                itemBuilder: (BuildContext context, int i) {
-                  if (i == value.length) {
-                    return const SizedBox(height: 72);
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: GestureDetector(
-                      onTap: () {
-                        context.goNamed(
-                          'entries',
-                          pathParameters: {'listId': value[i].id.toString()},
-                          queryParameters: {'listName': value[i].name},
-                        );
-                      },
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    value[i].name,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                  Text(
-                                    'Erstellt von ${value[i].creator.username}',
-                                    style: const TextStyle(color: Colors.grey, fontSize: 16),
-                                  ),
-                                ],
-                              ),
-                              IconButton(
-                                onPressed: () => _inviteDialogBuilder(context, ref, value[i].id),
-                                icon: const Icon(Icons.person_add_alt_1_rounded),
-                              )
-                            ],
+      body: RefreshIndicator(
+        onRefresh: () {
+          ref.invalidate(invitationsProvider);
+          return ref.refresh(listsProvider.future);
+        },
+        child: switch (lists) {
+          AsyncData(:final value) => Padding(
+              padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+              child: ListView.builder(
+                  itemCount: value.length + 1,
+                  itemBuilder: (BuildContext context, int i) {
+                    if (i == value.length) {
+                      return const SizedBox(height: 72);
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: GestureDetector(
+                        onTap: () {
+                          context.goNamed(
+                            'entries',
+                            pathParameters: {'listId': value[i].id.toString()},
+                            queryParameters: {'listName': value[i].name},
+                          );
+                        },
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      value[i].name,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                    Text(
+                                      'Erstellt von ${value[i].creator.username}',
+                                      style: const TextStyle(color: Colors.grey, fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                                IconButton(
+                                  onPressed: () => _inviteDialogBuilder(context, ref, value[i].id),
+                                  icon: const Icon(Icons.person_add_alt_1_rounded),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                }),
-          ),
-        AsyncError(:final error) => Center(child: Text('Error: $error')),
-        _ => const CircularProgressIndicator(),
-      },
+                    );
+                  }),
+            ),
+          AsyncError(:final error) => Center(child: Text('Error: $error')),
+          _ => const CircularProgressIndicator(),
+        },
+      ),
     );
   }
 }
