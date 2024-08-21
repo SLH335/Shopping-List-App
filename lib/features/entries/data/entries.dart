@@ -90,4 +90,29 @@ class Entries extends _$Entries {
 
     state = AsyncData(categories);
   }
+
+  Future<void> deleteEntry(int id) async {
+    final AuthData authData = await ref.read(authProvider.future);
+    final response = await http.delete(
+      Uri.http(authData.server, '/entry/$id'),
+      headers: {
+        'Authorization': 'Bearer ${authData.token}',
+      },
+      encoding: Encoding.getByName('utf-8'),
+    );
+
+    final json = jsonDecode(response.body);
+
+    if (response.statusCode != 200) {
+      print(json['message']);
+      return;
+    }
+
+    final categories = await future;
+    for (final category in categories.entries) {
+      categories[category.key]?.removeWhere((element) => element.id == id);
+    }
+
+    state = AsyncData(categories);
+  }
 }

@@ -67,13 +67,16 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
                                 return ListTile(
                                   leading: Checkbox(
                                     value: value.values.toList()[i][j].completed,
-                                    onChanged: (checked) {
-                                      ref
-                                          .read(entriesProvider(widget.listId).notifier)
-                                          .completeEntry(
-                                              value.values.toList()[i][j].id, checked ?? false);
-                                    },
+                                    onChanged: (checked) => ref
+                                        .read(entriesProvider(widget.listId).notifier)
+                                        .completeEntry(
+                                            value.values.toList()[i][j].id, checked ?? false),
                                   ),
+                                  trailing: IconButton(
+                                      onPressed: () => ref
+                                          .read(entriesProvider(widget.listId).notifier)
+                                          .deleteEntry(value.values.toList()[i][j].id),
+                                      icon: const Icon(Icons.delete_rounded)),
                                   title: Text(
                                     value.values.toList()[i][j].text,
                                     style: TextStyle(
