@@ -15,7 +15,7 @@ class Lists extends _$Lists {
     http.Response response;
     try {
       response = await http.get(
-        Uri.http(authData.server, '/lists'),
+        Uri.parse('${authData.server}/lists'),
         headers: {
           'Authorization': 'Bearer ${authData.token}',
         },
@@ -27,8 +27,10 @@ class Lists extends _$Lists {
     if (response.statusCode != 200) {
     }
     final lists = <ShoppingList>[];
-    for (var list in json['data']) {
-      lists.add(ShoppingList.fromJson(list));
+    if (json['data'] != null) {
+      for (var list in json['data']) {
+        lists.add(ShoppingList.fromJson(list));
+      }
     }
     return lists;
   }
@@ -38,7 +40,7 @@ class Lists extends _$Lists {
     http.Response response;
     try {
       response = await http.post(
-        Uri.http(authData.server, '/list'),
+        Uri.parse('${authData.server}/list'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Bearer ${authData.token}',

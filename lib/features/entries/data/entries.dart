@@ -13,7 +13,7 @@ class Entries extends _$Entries {
   Future<Map<String, List<Entry>>> build(String listId) async {
     final AuthData authData = await ref.watch(authProvider.future);
     final response = await http.get(
-      Uri.http(authData.server, '/list/$listId'),
+      Uri.parse('${authData.server}/list/$listId'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer ${authData.token}',
@@ -27,7 +27,7 @@ class Entries extends _$Entries {
   Future<void> completeEntry(int id, bool completed) async {
     final AuthData authData = await ref.read(authProvider.future);
     final response = await http.post(
-      Uri.http(authData.server, '/entry/$id/complete'),
+      Uri.parse('${authData.server}/entry/$id/complete'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer ${authData.token}',
@@ -56,7 +56,7 @@ class Entries extends _$Entries {
   Future<void> addEntry(String listId, String text, String category) async {
     final AuthData authData = await ref.read(authProvider.future);
     final response = await http.post(
-      Uri.http(authData.server, '/entry'),
+      Uri.parse('${authData.server}/entry'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer ${authData.token}',
@@ -94,7 +94,7 @@ class Entries extends _$Entries {
   Future<void> deleteEntry(int id) async {
     final AuthData authData = await ref.read(authProvider.future);
     final response = await http.delete(
-      Uri.http(authData.server, '/entry/$id'),
+      Uri.parse('${authData.server}/entry/$id'),
       headers: {
         'Authorization': 'Bearer ${authData.token}',
       },

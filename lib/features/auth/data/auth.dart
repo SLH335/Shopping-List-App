@@ -30,11 +30,13 @@ class Auth extends _$Auth {
   }
 
   Future<void> register(String server, String username, String password) async {
+    if (!server.startsWith('http://') && !server.startsWith('https://')) {
+      server = 'https://$server';
+    }
     http.Response response;
-    server = server.replaceFirst('http://', '').replaceFirst('9001/', '9001');
     try {
       response = await http.post(
-        Uri.http(server, 'auth/register'),
+        Uri.parse('$server/auth/register'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -80,11 +82,13 @@ class Auth extends _$Auth {
   }
 
   Future<void> login(String server, String username, String password) async {
-    server = server.replaceFirst('http://', '').replaceFirst('9001/', '9001');
+    if (!server.startsWith('http://') && !server.startsWith('https://')) {
+      server = 'https://$server';
+    }
     http.Response response;
     try {
       response = await http.post(
-        Uri.http(server, 'auth/login'),
+        Uri.parse('$server/auth/login'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },

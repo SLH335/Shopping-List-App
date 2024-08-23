@@ -15,9 +15,12 @@ class Invitations extends _$Invitations {
     final AuthData authData = await ref.watch(authProvider.future);
     Response response;
     try {
-      response = await get(Uri.http(authData.server, '/invitations'), headers: {
-        'Authorization': 'Bearer ${authData.token}',
-      });
+      response = await get(
+        Uri.parse('${authData.server}/invitations'),
+        headers: {
+          'Authorization': 'Bearer ${authData.token}',
+        },
+      );
     } catch (e) {
       return [];
     }
@@ -39,7 +42,7 @@ class Invitations extends _$Invitations {
     Response response;
     try {
       response = await post(
-        Uri.http(authData.server, '/invitation'),
+        Uri.parse('${authData.server}/invitation'),
         headers: {
           'Authorization': 'Bearer ${authData.token}',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -67,7 +70,7 @@ class Invitations extends _$Invitations {
     Response response;
     try {
       response = await post(
-        Uri.http(authData.server, '/invitation/accept'),
+        Uri.parse('${authData.server}/invitation/accept'),
         headers: {
           'Authorization': 'Bearer ${authData.token}',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -98,7 +101,7 @@ class Invitations extends _$Invitations {
     Response response;
     try {
       response = await post(
-        Uri.http(authData.server, '/invitation/decline'),
+        Uri.parse('${authData.server}/invitation/decline'),
         headers: {
           'Authorization': 'Bearer ${authData.token}',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -128,7 +131,7 @@ class Invitations extends _$Invitations {
     Response response;
     try {
       response = await post(
-        Uri.http(authData.server, '/invitation/revoke'),
+        Uri.parse('${authData.server}/invitation/revoke'),
         headers: {
           'Authorization': 'Bearer ${authData.token}',
           'Content-Type': 'application/x-www-form-urlencoded',
