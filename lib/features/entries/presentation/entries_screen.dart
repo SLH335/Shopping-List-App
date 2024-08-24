@@ -1,6 +1,6 @@
-import 'package:einkaufsliste/features/entries/data/entries.dart';
-import 'package:einkaufsliste/features/entries/domain/entry.dart';
-import 'package:einkaufsliste/widgets/text_fields.dart';
+import 'package:shoppinglist/features/entries/data/entries.dart';
+import 'package:shoppinglist/features/entries/domain/entry.dart';
+import 'package:shoppinglist/widgets/text_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

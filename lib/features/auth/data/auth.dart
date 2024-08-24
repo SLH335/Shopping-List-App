@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:einkaufsliste/features/auth/domain/user.dart';
-import 'package:http/http.dart' as http;
+import 'package:shoppinglist/features/auth/domain/user.dart';
+import 'package:http/http.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth.g.dart';
@@ -33,9 +33,9 @@ class Auth extends _$Auth {
     if (!server.startsWith('http://') && !server.startsWith('https://')) {
       server = 'https://$server';
     }
-    http.Response response;
+    Response response;
     try {
-      response = await http.post(
+      response = await post(
         Uri.parse('$server/auth/register'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -85,9 +85,9 @@ class Auth extends _$Auth {
     if (!server.startsWith('http://') && !server.startsWith('https://')) {
       server = 'https://$server';
     }
-    http.Response response;
+    Response response;
     try {
-      response = await http.post(
+      response = await post(
         Uri.parse('$server/auth/login'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

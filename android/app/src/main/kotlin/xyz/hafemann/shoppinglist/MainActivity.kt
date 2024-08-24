@@ -1,4 +1,4 @@
-package xyz.hafemann.einkaufsliste
+package xyz.hafemann.shoppinglist
 
 import io.flutter.embedding.android.FlutterActivity
 

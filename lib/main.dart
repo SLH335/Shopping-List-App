@@ -1,8 +1,8 @@
-import 'package:einkaufsliste/features/auth/presentation/login_screen.dart';
-import 'package:einkaufsliste/features/auth/presentation/register_screen.dart';
-import 'package:einkaufsliste/features/entries/presentation/entries_screen.dart';
-import 'package:einkaufsliste/features/invitations/presentation/invitations_screen.dart';
-import 'package:einkaufsliste/features/lists/presentation/lists_screen.dart';
+import 'package:shoppinglist/features/auth/presentation/login_screen.dart';
+import 'package:shoppinglist/features/auth/presentation/register_screen.dart';
+import 'package:shoppinglist/features/entries/presentation/entries_screen.dart';
+import 'package:shoppinglist/features/invitations/presentation/invitations_screen.dart';
+import 'package:shoppinglist/features/lists/presentation/lists_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

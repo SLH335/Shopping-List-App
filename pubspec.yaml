@@ -1,4 +1,4 @@
-name: einkaufsliste
+name: shoppinglist
 description: "Eine App für geteilte digitale Einkaufslisten"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

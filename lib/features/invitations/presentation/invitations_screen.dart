@@ -1,6 +1,6 @@
-import 'package:einkaufsliste/features/auth/data/auth.dart';
-import 'package:einkaufsliste/features/invitations/data/invitations.dart';
-import 'package:einkaufsliste/features/invitations/domain/invitation.dart';
+import 'package:shoppinglist/features/auth/data/auth.dart';
+import 'package:shoppinglist/features/invitations/data/invitations.dart';
+import 'package:shoppinglist/features/invitations/domain/invitation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

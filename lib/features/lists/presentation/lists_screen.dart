@@ -1,8 +1,8 @@
-import 'package:einkaufsliste/features/invitations/data/invitations.dart';
-import 'package:einkaufsliste/features/invitations/domain/invitation.dart';
-import 'package:einkaufsliste/features/lists/data/lists.dart';
-import 'package:einkaufsliste/features/lists/domain/list.dart';
-import 'package:einkaufsliste/widgets/text_fields.dart';
+import 'package:shoppinglist/features/invitations/data/invitations.dart';
+import 'package:shoppinglist/features/invitations/domain/invitation.dart';
+import 'package:shoppinglist/features/lists/data/lists.dart';
+import 'package:shoppinglist/features/lists/domain/list.dart';
+import 'package:shoppinglist/widgets/text_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

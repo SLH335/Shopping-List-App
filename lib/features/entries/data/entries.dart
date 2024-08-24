@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:einkaufsliste/features/auth/data/auth.dart';
-import 'package:http/http.dart' as http;
-import 'package:einkaufsliste/features/entries/domain/entry.dart';
+import 'package:shoppinglist/features/auth/data/auth.dart';
+import 'package:http/http.dart';
+import 'package:shoppinglist/features/entries/domain/entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'entries.g.dart';
@@ -12,7 +12,7 @@ class Entries extends _$Entries {
   @override
   Future<Map<String, List<Entry>>> build(String listId) async {
     final AuthData authData = await ref.watch(authProvider.future);
-    final response = await http.get(
+    final response = await get(
       Uri.parse('${authData.server}/list/$listId'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -26,7 +26,7 @@ class Entries extends _$Entries {
 
   Future<void> completeEntry(int id, bool completed) async {
     final AuthData authData = await ref.read(authProvider.future);
-    final response = await http.post(
+    final response = await post(
       Uri.parse('${authData.server}/entry/$id/complete'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -55,7 +55,7 @@ class Entries extends _$Entries {
 
   Future<void> addEntry(String listId, String text, String category) async {
     final AuthData authData = await ref.read(authProvider.future);
-    final response = await http.post(
+    final response = await post(
       Uri.parse('${authData.server}/entry'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -93,7 +93,7 @@ class Entries extends _$Entries {
 
   Future<void> deleteEntry(int id) async {
     final AuthData authData = await ref.read(authProvider.future);
-    final response = await http.delete(
+    final response = await delete(
       Uri.parse('${authData.server}/entry/$id'),
       headers: {
         'Authorization': 'Bearer ${authData.token}',

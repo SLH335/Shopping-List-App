@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:einkaufsliste/features/auth/data/auth.dart';
-import 'package:http/http.dart' as http;
-import 'package:einkaufsliste/features/lists/domain/list.dart';
+import 'package:shoppinglist/features/auth/data/auth.dart';
+import 'package:http/http.dart';
+import 'package:shoppinglist/features/lists/domain/list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'lists.g.dart';
@@ -12,9 +12,9 @@ class Lists extends _$Lists {
   @override
   Future<List<ShoppingList>> build() async {
     final AuthData authData = await ref.watch(authProvider.future);
-    http.Response response;
+    Response response;
     try {
-      response = await http.get(
+      response = await get(
         Uri.parse('${authData.server}/lists'),
         headers: {
           'Authorization': 'Bearer ${authData.token}',
@@ -24,7 +24,8 @@ class Lists extends _$Lists {
       return [];
     }
     final json = jsonDecode(response.body);
-    if (response.statusCode != 200) {
+    if (response.statusCode != 200 || !json['success']) {
+      return [];
     }
     final lists = <ShoppingList>[];
     if (json['data'] != null) {
@@ -37,18 +38,14 @@ class Lists extends _$Lists {
 
   Future<void> addList(String name) async {
     final AuthData authData = await ref.read(authProvider.future);
-    http.Response response;
+    Response response;
     try {
-      response = await http.post(
-        Uri.parse('${authData.server}/list'),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${authData.token}',
-        },
-        body: {
-          'name': name,
-        }
-      );
+      response = await post(Uri.parse('${authData.server}/list'), headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ${authData.token}',
+      }, body: {
+        'name': name,
+      });
     } catch (e) {
       return;
     }

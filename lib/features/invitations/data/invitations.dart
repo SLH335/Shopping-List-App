@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:einkaufsliste/features/auth/data/auth.dart';
-import 'package:einkaufsliste/features/invitations/domain/invitation.dart';
-import 'package:einkaufsliste/features/lists/data/lists.dart';
+import 'package:shoppinglist/features/auth/data/auth.dart';
+import 'package:shoppinglist/features/invitations/domain/invitation.dart';
+import 'package:shoppinglist/features/lists/data/lists.dart';
 import 'package:http/http.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

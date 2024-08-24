@@ -1,4 +1,4 @@
-import 'package:einkaufsliste/features/auth/domain/user.dart';
+import 'package:shoppinglist/features/auth/domain/user.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'list.freezed.dart';
