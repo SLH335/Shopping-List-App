@@ -47,6 +47,7 @@ class UsernameField extends StatelessWidget {
       ),
       enableSuggestions: false,
       autocorrect: false,
+      autofillHints: const [AutofillHints.username],
       maxLength: 16,
       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-z_]'))],
       validator: (String? value) {
@@ -111,6 +112,7 @@ class _PasswordFieldState extends State<PasswordField> {
       obscureText: _passwordObscured,
       enableSuggestions: false,
       autocorrect: false,
+      autofillHints: const [AutofillHints.password],
       decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: widget.label,
@@ -153,6 +155,7 @@ class _PasswordConfirmationFieldState extends State<PasswordConfirmationField> {
       obscureText: _passwordObscured,
       enableSuggestions: false,
       autocorrect: false,
+      autofillHints: const [AutofillHints.password],
       decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: widget.label,
