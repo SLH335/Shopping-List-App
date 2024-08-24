@@ -1,3 +1,5 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shoppinglist/features/auth/data/auth.dart';
 import 'package:shoppinglist/features/auth/presentation/login_screen.dart';
 import 'package:shoppinglist/features/auth/presentation/register_screen.dart';
 import 'package:shoppinglist/features/entries/presentation/entries_screen.dart';
@@ -11,14 +13,16 @@ void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
+  final _storage = const FlutterSecureStorage();
+
   final _router = GoRouter(
     initialLocation: '/login',
     routes: [
@@ -54,6 +58,25 @@ class _MyAppState extends State<MyApp> {
       ),
     ],
   );
+
+  Future<void> _tryLogin() async {
+    final server = await _storage.read(key: 'server');
+    final username = await _storage.read(key: 'username');
+    final password = await _storage.read(key: 'password');
+    final token = await _storage.read(key: 'token');
+
+    if (server != null && token != null) {
+      await ref.read(authProvider.notifier).verifySession(server, token);
+    } else if (server != null && username != null && password != null) {
+      await ref.read(authProvider.notifier).login(server, username, password);
+    }
+  }
+
+  @override
+  void initState() {
+    _tryLogin();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
