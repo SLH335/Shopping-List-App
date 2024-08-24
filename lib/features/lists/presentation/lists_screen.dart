@@ -97,7 +97,7 @@ class _ListsScreenState extends ConsumerState<ListsScreen> {
                   }),
             ),
           AsyncError(:final error) => Center(child: Text('Error: $error')),
-          _ => const CircularProgressIndicator(),
+          _ => const Center(child: CircularProgressIndicator()),
         },
       ),
     );
