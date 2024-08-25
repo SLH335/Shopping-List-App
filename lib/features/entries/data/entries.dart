@@ -19,7 +19,7 @@ class Entries extends _$Entries {
         'Authorization': 'Bearer ${authData.token}',
       },
     );
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     var entries = Entry.allFromJson(json['data'] ?? []);
     return entries;
   }
@@ -38,7 +38,7 @@ class Entries extends _$Entries {
       },
     );
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     if (response.statusCode != 200) {
       print(json['message']);
       return;
@@ -69,7 +69,7 @@ class Entries extends _$Entries {
       },
     );
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
 
     if (response.statusCode != 200) {
       print(json['message']);
@@ -101,7 +101,7 @@ class Entries extends _$Entries {
       encoding: Encoding.getByName('utf-8'),
     );
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
 
     if (response.statusCode != 200) {
       print(json['message']);

@@ -23,7 +23,7 @@ class Lists extends _$Lists {
     } catch (e) {
       return [];
     }
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     if (response.statusCode != 200 || !json['success']) {
       return [];
     }
@@ -49,7 +49,7 @@ class Lists extends _$Lists {
     } catch (e) {
       return;
     }
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     if (response.statusCode != 200 || !json['success']) {
       return;
     }

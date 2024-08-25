@@ -25,7 +25,7 @@ class Invitations extends _$Invitations {
       return [];
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     if (response.statusCode != 200) {
       print(json['message']);
     }
@@ -57,7 +57,7 @@ class Invitations extends _$Invitations {
       return;
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
 
     if (response.statusCode != 200) {
       print(json['message']);
@@ -83,7 +83,7 @@ class Invitations extends _$Invitations {
       return;
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
 
     if (response.statusCode != 200) {
       print(json['message']);
@@ -114,7 +114,7 @@ class Invitations extends _$Invitations {
       return;
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
 
     if (response.statusCode != 200) {
       print(json['message']);
@@ -145,7 +145,7 @@ class Invitations extends _$Invitations {
       return;
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
 
     if (response.statusCode != 200) {
       print(json['message']);

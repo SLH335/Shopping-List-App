@@ -63,7 +63,7 @@ class Auth extends _$Auth {
 
     Map<String, dynamic> json;
     try {
-      json = jsonDecode(response.body) as Map<String, dynamic>;
+      json = jsonDecode(utf8.decode(response.bodyBytes));
     } catch (ex) {
       state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Ungültige Antwort'));
       return;
@@ -123,7 +123,7 @@ class Auth extends _$Auth {
 
     Map<String, dynamic> json;
     try {
-      json = jsonDecode(response.body) as Map<String, dynamic>;
+      json = jsonDecode(utf8.decode(response.bodyBytes));
     } catch (ex) {
       state = AsyncData(AuthData(state: AuthState.error, message: 'Fehler: Ungültige Antwort'));
       return;
