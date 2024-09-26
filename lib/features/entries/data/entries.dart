@@ -53,6 +53,33 @@ class Entries extends _$Entries {
     state = AsyncData(entries);
   }
 
+  Future<void> moveEntry(String listId, String category, int oldIndex, int newIndex) async {
+    final AuthData authData = await ref.read(authProvider.future);
+    final response = await post(
+      Uri.parse('${authData.server}/entry/move'),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ${authData.token}',
+      },
+      encoding: Encoding.getByName('utf-8'),
+      body: {
+        'list_id': listId,
+        'category': category,
+        'old_index': oldIndex.toString(),
+        'new_index': newIndex.toString(),
+      },
+    );
+
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
+    if (response.statusCode != 200) {
+      print(json['message']);
+      return;
+    }
+
+    var entries = Entry.allFromJson(json['data']);
+    state = AsyncData(entries);
+  }
+
   Future<void> addEntry(String listId, String text, String category) async {
     final AuthData authData = await ref.read(authProvider.future);
     final response = await post(

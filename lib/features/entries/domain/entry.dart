@@ -10,6 +10,7 @@ class Entry with _$Entry {
     required int listId,
     required String text,
     required String category,
+    required int orderIndex,
     required bool completed,
     required DateTime createdAt,
   }) = _Entry;

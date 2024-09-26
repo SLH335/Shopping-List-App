@@ -59,12 +59,20 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
                               ),
                             ),
                             const Divider(indent: 8, endIndent: 8),
-                            ListView.builder(
+                            ReorderableListView.builder(
+                              onReorder: (oldIndex, newIndex) {
+                                ref.read(entriesProvider(widget.listId).notifier).moveEntry(
+                                    widget.listId,
+                                    value.values.toList()[i][0].category,
+                                    oldIndex,
+                                    newIndex);
+                              },
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: value.values.toList()[i].length,
                               itemBuilder: (BuildContext context, int j) {
                                 return ListTile(
+                                  key: Key('${value.values.toList()[i][j].id}'),
                                   leading: Checkbox(
                                     value: value.values.toList()[i][j].completed,
                                     onChanged: (checked) => ref
